@@ -151,7 +151,7 @@ SparseMatrix sum(SparseMatrix& A, SparseMatrix& B) {
 // Multiplicação de matrizes
 SparseMatrix multiply(SparseMatrix& A, SparseMatrix& B) {
     if (A.getColuns() != B.getLines()) {
-        throw invalid_argument("As matrizes devekm ter as mesmas dimensões para multiplica-las");
+        throw invalid_argument("As matrizes devem ter as mesmas dimensões para multiplica-las");
     }
     
     SparseMatrix result(A.getLines(), B.getColuns());
