@@ -175,3 +175,21 @@ SparseMatrix multiply(SparseMatrix& A, SparseMatrix& B) {
 
     return result;
 }
+
+// Lê e passa um arquivo para a matriz
+void readSparseMatrix(SparseMatrix& m, const string& fileName) {
+    ifstream file(fileName);
+    if (!file.is_open()) {
+        throw runtime_error("Não foi possível abrir o arquivo.");
+    }
+
+    int linhas, colunas;
+    file >> linhas >> colunas;
+
+    int i, j;
+    double value;
+    while (file >> i >> j >> value) {
+        m.insert(i, j, value);
+    }
+}
+
