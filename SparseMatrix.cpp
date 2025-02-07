@@ -1,4 +1,4 @@
-//INCLUDES
+// INCLUDES
 #include "SparseMatrix.h"
 
 using namespace std;
@@ -13,12 +13,14 @@ SparseMatrix::SparseMatrix(int m, int n) : lines(m), coluns(n) {
 
     for (int i = 1; i <= m; ++i) {
         LineHeaders[i] = new Node(i, 0, 0.0);
+        ColunHeaders[i] = new Node(0, 0, 0.0); // Aloca a memória para ColunHeaders[i]
         ColunHeaders[i]->right = LineHeaders[i];
     }
     for (int j = 1; j <= n; ++j) {
-        ColunHeaders[j] = new Node(0, j, 0.0);
+        ColunHeaders[j] = new Node(0, j, 0.0); // Isso agora está correto
         ColunHeaders[j]->down = ColunHeaders[j];
     }
+    
 }
 
 // Destrutor
@@ -96,7 +98,7 @@ void SparseMatrix::print() {
         for (int j = 1; j <= coluns; ++j) {
             cout << getValue(i, j) << " ";
         }
-            cout << "\n";
+        cout << "\n";
     }
 }
 
@@ -105,7 +107,7 @@ int SparseMatrix::getColuns() const { return coluns; }
 
 Node* SparseMatrix::getLineHeader(int i) const {
     if (i < 1 || i > lines) {
-        throw std::out_of_range("Índice de linha fora dos limites.");
+        throw out_of_range("Índice de linha fora dos limites.");
     }
     return LineHeaders[i];
 }
@@ -117,38 +119,36 @@ Node* SparseMatrix::getColunHeader(int j) const {
     return ColunHeaders[j];
 }
 
-
 // Soma de matrizes
 SparseMatrix sum(SparseMatrix& A, SparseMatrix& B) {
     if (A.getLines() != B.getLines() || A.getColuns() != B.getColuns()) {
-        throw std::invalid_argument("As matrizes devem ter as mesmas dimensões para soma-las");
+        throw invalid_argument("As matrizes devem ter as mesmas dimensões para soma-las");
     }
 
     SparseMatrix result(A.getLines(), A.getColuns());
 
     for (int i = 1; i <= A.getLines(); ++i) {
-    Node* currentA = A.getLineHeader(i)->right;
-    Node* currentB = B.getLineHeader(i)->right;
+        Node* currentA = A.getLineHeader(i)->right;
+        Node* currentB = B.getLineHeader(i)->right;
 
-    while (currentA != A.getLineHeader(i) || currentB != B.getLineHeader(i)) {
-        if (currentA != A.getLineHeader(i) && (currentB == B.getLineHeader(i) || currentA->colun < currentB->colun)) {
-            result.insert(i, currentA->colun, currentA->value);
-            currentA = currentA->right;
-        } else if (currentB != B.getLineHeader(i) && (currentA == A.getLineHeader(i) || currentB->colun < currentA->colun)) {
-            result.insert(i, currentB->colun, currentB->value);
-            currentB = currentB->right;
-        } else {
-            result.insert(i, currentA->colun, currentA->value + currentB->value);
-            currentA = currentA->right;
-            currentB = currentB->right;
+        while (currentA != A.getLineHeader(i) || currentB != B.getLineHeader(i)) {
+            if (currentA != A.getLineHeader(i) && (currentB == B.getLineHeader(i) || currentA->colun < currentB->colun)) {
+                result.insert(i, currentA->colun, currentA->value);
+                currentA = currentA->right;
+            } else if (currentB != B.getLineHeader(i) && (currentA == A.getLineHeader(i) || currentB->colun < currentA->colun)) {
+                result.insert(i, currentB->colun, currentB->value);
+                currentB = currentB->right;
+            } else {
+                result.insert(i, currentA->colun, currentA->value + currentB->value);
+                currentA = currentA->right;
+                currentB = currentB->right;
+            }
         }
     }
-}
-
 
     return result;
 }
-// Multiplicação de matrizes
+
 SparseMatrix multiply(SparseMatrix& A, SparseMatrix& B) {
     if (A.getColuns() != B.getLines()) {
         throw invalid_argument("As matrizes devem ter as mesmas dimensões para multiplica-las");
@@ -176,7 +176,6 @@ SparseMatrix multiply(SparseMatrix& A, SparseMatrix& B) {
     return result;
 }
 
-// Lê e passa um arquivo para a matriz
 void readSparseMatrix(SparseMatrix& m, const string& fileName) {
     ifstream file(fileName);
     if (!file.is_open()) {
@@ -186,10 +185,20 @@ void readSparseMatrix(SparseMatrix& m, const string& fileName) {
     int linhas, colunas;
     file >> linhas >> colunas;
 
+    if (linhas != m.getLines() || colunas != m.getColuns()) {
+        file.close();
+        throw invalid_argument("Dimensões da matriz no arquivo não correspondem à matriz fornecida.");
+    }
+
     int i, j;
     double value;
     while (file >> i >> j >> value) {
-        m.insert(i, j, value);
+        try {
+            m.insert(i, j, value);
+        } catch (const out_of_range& e) {
+            cerr << "Erro: " << e.what() << " - Posição (" << i << ", " << j << ") inválida no arquivo." << endl;
+        }
     }
-}
 
+    file.close();
+}
