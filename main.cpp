@@ -1,8 +1,12 @@
+// Íkaro Freitas de Almeida - 569707
+
+// INCLUDES
 #include <iostream>
 #include "SparseMatrix.h"
 
 using namespace std;
 
+// Função que inicializa o menu de operações
 void showMenu() {
     cout << "\n===== Menu de Operações =====\n";
     cout << "1 - Criar Matrizes\n";

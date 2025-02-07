@@ -1,6 +1,7 @@
+// DEFINES
 #ifndef SPARSE_MATRIX_H
 #define SPARSE_MATRIX_H
-
+// INCLUDES
 #include <iostream>
 #include <stdexcept>
 #include <fstream>
@@ -8,6 +9,7 @@
 
 using namespace std;
 
+// Criando o nó
 struct Node {
     Node* right;
     Node* down;
@@ -17,6 +19,7 @@ struct Node {
     Node(int line, int colun, double value) : right(this), down(this), line(line), colun(colun), value(value) {}
 };
 
+// Criando classe SparseMatrix
 class SparseMatrix {
 private:
     int lines;
@@ -39,7 +42,7 @@ public:
     Node* getColunHeader(int j) const;
 };
 
-// Agora as funções estão FORA da classe
+// Declarando funções-membro
 SparseMatrix sum(SparseMatrix& A, SparseMatrix& B);
 SparseMatrix multiply(SparseMatrix& A, SparseMatrix& B);
 void readSparseMatrix(SparseMatrix& m, const string& fileName);

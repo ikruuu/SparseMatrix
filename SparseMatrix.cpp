@@ -17,7 +17,7 @@ SparseMatrix::SparseMatrix(int m, int n) : lines(m), coluns(n) {
         ColunHeaders[i]->right = LineHeaders[i];
     }
     for (int j = 1; j <= n; ++j) {
-        ColunHeaders[j] = new Node(0, j, 0.0); // Isso agora está correto
+        ColunHeaders[j] = new Node(0, j, 0.0);
         ColunHeaders[j]->down = ColunHeaders[j];
     }
     
@@ -102,6 +102,7 @@ void SparseMatrix::print() {
     }
 }
 
+// Getters de linhas e colunas
 int SparseMatrix::getLines() const { return lines; }
 int SparseMatrix::getColuns() const { return coluns; }
 
@@ -149,6 +150,7 @@ SparseMatrix sum(SparseMatrix& A, SparseMatrix& B) {
     return result;
 }
 
+// Multiplicação de matrizes
 SparseMatrix multiply(SparseMatrix& A, SparseMatrix& B) {
     if (A.getColuns() != B.getLines()) {
         throw invalid_argument("As matrizes devem ter as mesmas dimensões para multiplica-las");
@@ -175,7 +177,7 @@ SparseMatrix multiply(SparseMatrix& A, SparseMatrix& B) {
 
     return result;
 }
-
+// Recebe um arquivo e manda para a matriz
 void readSparseMatrix(SparseMatrix& m, const string& fileName) {
     ifstream file(fileName);
     if (!file.is_open()) {
